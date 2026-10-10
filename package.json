@@ -1,0 +1,18 @@
+{
+  "name": "needle-coop-launcher",
+  "version": "1.0.1",
+  "description": "Find The Needle Co-op Launcher by lionderwahre",
+  "author": "lionderwahre",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --win"
+  },
+  "devDependencies": {
+    "@electron/fuses": "^1.8.0",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "rcedit": "^4.0.1"
+  }
+}

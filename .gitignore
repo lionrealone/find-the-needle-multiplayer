@@ -1,0 +1,8 @@
+﻿node_modules/
+dist/
+.secure/
+.DS_Store
+*.log
+release/
+Thumbs.db
+*.blockmap

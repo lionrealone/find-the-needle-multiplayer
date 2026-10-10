@@ -1,0 +1,37 @@
+appId: com.lionderwahre.needle-coop-launcher
+productName: Find The Needle
+copyright: lionderwahre
+asar: true
+asarUnpack:
+  - renderer/**/*
+  - preload.js
+directories:
+  output: dist
+  buildResources: build
+files:
+  - from: src
+    to: .
+    filter:
+      - "**/*"
+  - package.json
+extraMetadata:
+  main: main.js
+  author: lionderwahre
+extraResources:
+  - from: resources/multiplayer
+    to: multiplayer
+    filter:
+      - "**/*"
+  - from: build/icon.png
+    to: icon.png
+afterPack: scripts/after-pack.js
+win:
+  icon: build/icon.ico
+  target:
+    - target: portable
+      arch:
+        - x64
+  requestedExecutionLevel: asInvoker
+  signAndEditExecutable: false
+portable:
+  artifactName: Find The Needle.exe

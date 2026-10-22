@@ -1,11 +1,17 @@
-const AUTHOR = 'lionderwahre';
+const AUTHOR = 'lionrealone';
 const fs = require('fs');
 const path = require('path');
-const { execFile } = require('child_process');
+const { execFile, execFileSync } = require('child_process');
 const { app } = require('electron');
 
 const APP_ID = '5165210';
 const EXE_NAME = 'FindTheNeedle.exe';
+const FOLDER_GUESSES = [
+  'Find The Needle Demo',
+  'Find the Needle Demo',
+  'FindTheNeedle Demo',
+  'Find The Needle',
+];
 
 function readText(file) {
   try {
@@ -15,31 +21,128 @@ function readText(file) {
   }
 }
 
+function normalizeSteamPath(p) {
+  if (!p) return '';
+  let s = String(p).trim().replace(/^"|"$/g, '');
+  s = s.replace(/\\\\/g, '\\').replace(/\//g, '\\');
+  try {
+    s = path.normalize(s);
+  } catch {
+    return '';
+  }
+  if (s.endsWith('\\')) s = s.slice(0, -1);
+  return s;
+}
+
+function regQuerySteamPaths() {
+  const keys = [
+    ['HKCU\\Software\\Valve\\Steam', 'SteamPath'],
+    ['HKLM\\SOFTWARE\\WOW6432Node\\Valve\\Steam', 'InstallPath'],
+    ['HKLM\\SOFTWARE\\Valve\\Steam', 'InstallPath'],
+  ];
+  const found = [];
+  for (const [key, value] of keys) {
+    try {
+      const out = execFileSync('reg', ['query', key, '/v', value], {
+        encoding: 'utf8',
+        windowsHide: true,
+        timeout: 4000,
+      });
+      const m = String(out).match(
+        new RegExp(`${value}\\s+REG_SZ\\s+(.+)`, 'i'),
+      );
+      if (m && m[1]) found.push(normalizeSteamPath(m[1]));
+    } catch {
+      /* key missing */
+    }
+  }
+  return found;
+}
+
+function parseLibraryFolders(vdfPath, into) {
+  const text = readText(vdfPath);
+  if (!text) return;
+  for (const m of text.matchAll(/"path"\s+"([^"]+)"/gi)) {
+    const p = normalizeSteamPath(m[1]);
+    if (p) into.add(p);
+  }
+}
+
 function steamRoots() {
   const roots = new Set();
   const pf = process.env['ProgramFiles(x86)'] || 'C:\\Program Files (x86)';
   const pf64 = process.env.ProgramFiles || 'C:\\Program Files';
-  roots.add(path.join(pf, 'Steam'));
-  roots.add(path.join(pf64, 'Steam'));
+  const local = process.env.LOCALAPPDATA || '';
 
-  const mainVdf = path.join(pf, 'Steam', 'steamapps', 'libraryfolders.vdf');
-  const text = readText(mainVdf);
-  for (const m of text.matchAll(/"path"\s+"([^"]+)"/g)) {
-    roots.add(m[1].replace(/\\\\/g, '\\'));
+  for (const p of [
+    path.join(pf, 'Steam'),
+    path.join(pf64, 'Steam'),
+    local ? path.join(local, 'Steam') : '',
+    ...regQuerySteamPaths(),
+  ]) {
+    const n = normalizeSteamPath(p);
+    if (n) roots.add(n);
   }
-  return [...roots].filter((r) => fs.existsSync(r));
+
+  let changed = true;
+  let guard = 0;
+  while (changed && guard < 8) {
+    changed = false;
+    guard += 1;
+    for (const root of [...roots]) {
+      const before = roots.size;
+      parseLibraryFolders(
+        path.join(root, 'steamapps', 'libraryfolders.vdf'),
+        roots,
+      );
+      parseLibraryFolders(
+        path.join(root, 'config', 'libraryfolders.vdf'),
+        roots,
+      );
+      if (roots.size !== before) changed = true;
+    }
+  }
+
+  return [...roots].filter((r) => {
+    try {
+      return fs.existsSync(r);
+    } catch {
+      return false;
+    }
+  });
+}
+
+function looksLikeGameDir(dir) {
+  if (!dir) return false;
+  try {
+    return fs.existsSync(path.join(dir, EXE_NAME));
+  } catch {
+    return false;
+  }
+}
+
+function saveGameDirMarker(dir) {
+  try {
+    const marker = path.join(app.getPath('userData'), 'game-dir.txt');
+    fs.mkdirSync(path.dirname(marker), { recursive: true });
+    fs.writeFileSync(marker, dir, 'utf8');
+  } catch {
+    /* ignore */
+  }
 }
 
 function findGameInstall() {
   const marker = path.join(app.getPath('userData'), 'game-dir.txt');
   if (fs.existsSync(marker)) {
-    const dir = readText(marker).trim();
-    if (dir && fs.existsSync(path.join(dir, EXE_NAME))) {
+    const dir = normalizeSteamPath(readText(marker).trim());
+    if (looksLikeGameDir(dir)) {
       return { gameDir: dir, steamPath: guessSteamNear(dir) };
     }
   }
 
-  for (const root of steamRoots()) {
+  const roots = steamRoots();
+
+  for (const root of roots) {
     const manifest = path.join(
       root,
       'steamapps',
@@ -47,18 +150,41 @@ function findGameInstall() {
     );
     if (!fs.existsSync(manifest)) continue;
     const body = readText(manifest);
-    const m = body.match(/"installdir"\s+"([^"]+)"/);
+    const m = body.match(/"installdir"\s+"([^"]+)"/i);
     if (!m) continue;
     const gameDir = path.join(root, 'steamapps', 'common', m[1]);
-    if (fs.existsSync(path.join(gameDir, EXE_NAME))) {
+    if (looksLikeGameDir(gameDir)) {
       return { gameDir, steamPath: root };
     }
   }
 
-  for (const root of steamRoots()) {
-    const guess = path.join(root, 'steamapps', 'common', 'Find The Needle Demo');
-    if (fs.existsSync(path.join(guess, EXE_NAME))) {
-      return { gameDir: guess, steamPath: root };
+  for (const root of roots) {
+    for (const name of FOLDER_GUESSES) {
+      const guess = path.join(root, 'steamapps', 'common', name);
+      if (looksLikeGameDir(guess)) {
+        return { gameDir: guess, steamPath: root };
+      }
+    }
+  }
+
+  // Last resort: scan steamapps/common for FindTheNeedle.exe (one level).
+  for (const root of roots) {
+    const common = path.join(root, 'steamapps', 'common');
+    let entries = [];
+    try {
+      entries = fs.readdirSync(common, { withFileTypes: true });
+    } catch {
+      continue;
+    }
+    for (const entry of entries) {
+      if (!entry.isDirectory()) continue;
+      const gameDir = path.join(common, entry.name);
+      if (looksLikeGameDir(gameDir)) {
+        const lower = entry.name.toLowerCase();
+        if (lower.includes('needle') || lower.includes('find')) {
+          return { gameDir, steamPath: root };
+        }
+      }
     }
   }
 
@@ -67,12 +193,16 @@ function findGameInstall() {
 
 function guessSteamNear(gameDir) {
   let cur = path.resolve(gameDir);
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 8; i++) {
     const steamExe = path.join(cur, 'steam.exe');
     if (fs.existsSync(steamExe)) return cur;
     const parent = path.dirname(cur);
     if (parent === cur) break;
     cur = parent;
+  }
+  const roots = steamRoots();
+  for (const root of roots) {
+    if (fs.existsSync(path.join(root, 'steam.exe'))) return root;
   }
   const pf = process.env['ProgramFiles(x86)'] || 'C:\\Program Files (x86)';
   return path.join(pf, 'Steam');
@@ -126,9 +256,12 @@ function waitForGameExit() {
 }
 
 module.exports = {
+  AUTHOR,
   APP_ID,
   EXE_NAME,
   findGameInstall,
+  looksLikeGameDir,
+  saveGameDirMarker,
   isGameRunning,
   waitForGameExit,
 };

@@ -1,11 +1,17 @@
-const AUTHOR = 'lionderwahre';
+const AUTHOR = 'lionrealone';
 const fs = require('fs');
 const path = require('path');
 const { t } = require('./i18n');
 
 const AUTOLOAD_KEY = 'MPMod';
 const AUTOLOAD_VALUE = '*mods/multiplayer/mp.gd';
-const MARKER = '; lionderwahre';
+const MARKER = '; lionrealone';
+const ALL_MARKERS = [MARKER, '; lionderwahre'];
+
+function hasModMarker(text) {
+  const src = String(text || '');
+  return ALL_MARKERS.some((m) => src.includes(m));
+}
 
 function getModSourceDir() {
   if (process.resourcesPath) {
@@ -54,7 +60,7 @@ function ensureBackup(gameDir) {
   const bak = path.join(gameDir, 'override.cfg.needle-backup');
   if (fs.existsSync(cfg) && !fs.existsSync(bak)) {
     const raw = readCfg(cfg);
-    if (!raw.includes(AUTOLOAD_KEY) && !raw.includes(MARKER)) {
+    if (!raw.includes(AUTOLOAD_KEY) && !hasModMarker(raw)) {
       writeCfg(bak, raw);
     }
   }
@@ -109,7 +115,10 @@ function stripModAutoload(text) {
     }
 
     if (inAutoload) {
-      if (trimmed.startsWith(`${AUTOLOAD_KEY}=`) || trimmed.includes(MARKER)) {
+      if (
+        trimmed.startsWith(`${AUTOLOAD_KEY}=`) ||
+        ALL_MARKERS.some((m) => trimmed.includes(m))
+      ) {
         continue;
       }
       if (trimmed === '' || trimmed.startsWith(';') || trimmed.startsWith('#')) {

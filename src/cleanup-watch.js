@@ -1,4 +1,4 @@
-const AUTHOR = 'lionderwahre';
+﻿const AUTHOR = 'lionrealone';
 const { execFile } = require('child_process');
 const { disableMod } = require('./mod');
 

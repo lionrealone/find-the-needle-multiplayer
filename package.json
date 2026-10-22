@@ -1,8 +1,8 @@
 {
   "name": "needle-coop-launcher",
-  "version": "1.0.1",
-  "description": "Find The Needle Co-op Launcher by lionderwahre",
-  "author": "lionderwahre",
+  "version": "1.0.2",
+  "description": "Find The Needle Co-op Launcher by lionrealone",
+  "author": "lionrealone",
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",

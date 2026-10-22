@@ -1,4 +1,4 @@
-const AUTHOR = 'lionderwahre';
+const AUTHOR = 'lionrealone';
 const { contextBridge, ipcRenderer } = require('electron');
 const { t, lang } = require('./i18n');
 
@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld('needle', {
   stopCoop: () => ipcRenderer.invoke('stop-coop'),
   openGameFolder: () => ipcRenderer.invoke('open-game-folder'),
   pickGameFolder: () => ipcRenderer.invoke('pick-game-folder'),
+  openSteamDemo: () => ipcRenderer.invoke('open-steam-demo'),
   onStatus: (cb) => {
     const handler = (_e, data) => cb(data);
     ipcRenderer.on('status', handler);

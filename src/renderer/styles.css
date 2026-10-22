@@ -1,5 +1,5 @@
 :root {
-  --author: lionderwahre;
+  --author: lionrealone;
   --ink: #f5f5f5;
   --muted: #a8a8b3;
   --deep: #08070e;
@@ -146,6 +146,31 @@ h1 {
 .cta:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+.actions {
+  margin-top: 0.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1.1rem;
+  animation: rise 1.05s ease both;
+}
+
+.link {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--muted);
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.88rem;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+}
+
+.link:hover {
+  color: var(--ink);
 }
 
 .msg {

@@ -1,5 +1,5 @@
 extends Node
-const AUTHOR := "lionderwahre"
+const AUTHOR := "lionrealone"
 
 const PATH := "user://mp_trace.log"
 const PREV := "user://mp_trace.prev.log"

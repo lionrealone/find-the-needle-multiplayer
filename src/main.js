@@ -1,4 +1,4 @@
-const AUTHOR = 'lionderwahre';
+const AUTHOR = 'lionrealone';
 const {
   app,
   BrowserWindow,
@@ -10,7 +10,13 @@ const path = require('path');
 const fs = require('fs');
 const { pathToFileURL } = require('url');
 const { spawn } = require('child_process');
-const { findGameInstall, isGameRunning } = require('./game');
+const {
+  findGameInstall,
+  isGameRunning,
+  looksLikeGameDir,
+  saveGameDirMarker,
+  EXE_NAME,
+} = require('./game');
 const {
   enableMod,
   disableMod,
@@ -284,17 +290,30 @@ function bootLauncher() {
   ipcMain.handle('pick-game-folder', async () => {
     const res = await dialog.showOpenDialog(win, {
       title: t('pick_folder_title'),
-      properties: ['openDirectory'],
+      properties: ['openFile'],
+      filters: [
+        { name: 'FindTheNeedle.exe', extensions: ['exe'] },
+        { name: 'All', extensions: ['*'] },
+      ],
     });
     if (res.canceled || !res.filePaths[0]) return { ok: false };
-    const dir = res.filePaths[0];
-    const exe = path.join(dir, 'FindTheNeedle.exe');
-    if (!fs.existsSync(exe)) {
+
+    const picked = res.filePaths[0];
+    if (path.basename(picked).toLowerCase() !== EXE_NAME.toLowerCase()) {
       return { ok: false, error: t('no_exe_in_folder') };
     }
-    const marker = path.join(app.getPath('userData'), 'game-dir.txt');
-    fs.writeFileSync(marker, dir, 'utf8');
+    const dir = path.dirname(picked);
+    if (!looksLikeGameDir(dir)) {
+      return { ok: false, error: t('no_exe_in_folder') };
+    }
+
+    saveGameDirMarker(dir);
     await refreshStatus();
     return { ok: true, gameDir: dir };
+  });
+
+  ipcMain.handle('open-steam-demo', async () => {
+    await shell.openExternal('steam://install/5165210');
+    return { ok: true };
   });
 }

@@ -1,6 +1,6 @@
-appId: com.lionderwahre.needle-coop-launcher
+appId: com.lionrealone.needle-coop-launcher
 productName: Find The Needle
-copyright: lionderwahre
+copyright: lionrealone
 asar: true
 asarUnpack:
   - renderer/**/*
@@ -16,7 +16,7 @@ files:
   - package.json
 extraMetadata:
   main: main.js
-  author: lionderwahre
+  author: lionrealone
 extraResources:
   - from: resources/multiplayer
     to: multiplayer

@@ -1,4 +1,4 @@
-const AUTHOR = 'lionderwahre';
+const AUTHOR = 'lionrealone';
 const path = require('path');
 const fs = require('fs');
 const { flipFuses, FuseVersion, FuseV1Options } = require('@electron/fuses');

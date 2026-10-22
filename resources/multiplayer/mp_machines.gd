@@ -1,5 +1,5 @@
 extends Node
-const AUTHOR := "lionderwahre"
+const AUTHOR := "lionrealone"
 
 const TICK := 0.1
 const FIELD_TICK := 0.5

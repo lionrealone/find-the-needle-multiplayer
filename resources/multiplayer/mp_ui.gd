@@ -1,5 +1,5 @@
 extends CanvasLayer
-const AUTHOR := "lionderwahre"
+const AUTHOR := "lionrealone"
 
 const COL_TITLE := Color(1.0, 0.86, 0.34)
 const COL_TEXT := Color(0.95, 0.96, 0.99)

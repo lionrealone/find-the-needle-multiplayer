@@ -1,5 +1,5 @@
 extends Node3D
-const AUTHOR := "lionderwahre"
+const AUTHOR := "lionrealone"
 
 const TOOL_NAMES := ["Hand", "Spade", "Pitchfork", "Broom", "Toy Shovel",
 	"Metal Detector", "Yard Vac", "Lighter", "BUILD"]

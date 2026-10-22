@@ -1,5 +1,5 @@
 extends Node
-const AUTHOR := "lionderwahre"
+const AUTHOR := "lionrealone"
 
 const VERSION := "0.19.5"
 const DEFAULT_PORT := 7777
@@ -278,7 +278,10 @@ func _become_host() -> void:
 func mp_data_root() -> String:
 	var home := OS.get_environment("USERPROFILE").replace("\\", "/")
 	if home == "":
-		home = "C:/Users/lionderwahre"
+		home = OS.get_environment("HOME").replace("\\", "/")
+	if home == "":
+		home = "C:/Users/Public"
+	# Game company folder from the Steam demo (do not rename).
 	return home.path_join("AppData/LocalLow/lionderwahre/findtheneedle/multiplayer")
 
 func mp_host_dir() -> String:

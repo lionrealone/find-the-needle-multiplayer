@@ -1,8 +1,6 @@
 const AUTHOR = 'lionrealone';
 const btn = document.getElementById('btnStart');
 const btnPick = document.getElementById('btnPick');
-const btnSteam = document.getElementById('btnSteam');
-const actions = document.getElementById('actions');
 const msg = document.getElementById('msg');
 const lede = document.querySelector('.lede');
 
@@ -15,7 +13,6 @@ function applyStaticUi() {
   if (lede) lede.textContent = t('lede');
   btn.textContent = t('start');
   if (btnPick) btnPick.textContent = t('pick_folder');
-  if (btnSteam) btnSteam.textContent = t('open_steam_demo');
 }
 
 function setMsg(text, ok) {
@@ -26,7 +23,6 @@ function setMsg(text, ok) {
 function paint(s) {
   if (!s) return;
   const missing = !s.gameFound;
-  if (actions) actions.hidden = !missing;
   btn.disabled =
     Boolean(s.busy) || Boolean(s.launching) || missing || s.running;
   if (missing) {
@@ -62,14 +58,9 @@ async function pickFolder() {
   }
 }
 
-async function openSteamDemo() {
-  await window.needle.openSteamDemo();
-}
-
 void AUTHOR;
 applyStaticUi();
 window.needle.onStatus(paint);
 window.needle.getStatus();
 btn.addEventListener('click', startNow);
 if (btnPick) btnPick.addEventListener('click', pickFolder);
-if (btnSteam) btnSteam.addEventListener('click', openSteamDemo);

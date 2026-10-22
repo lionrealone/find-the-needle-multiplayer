@@ -312,8 +312,4 @@ function bootLauncher() {
     return { ok: true, gameDir: dir };
   });
 
-  ipcMain.handle('open-steam-demo', async () => {
-    await shell.openExternal('steam://install/5165210');
-    return { ok: true };
-  });
 }

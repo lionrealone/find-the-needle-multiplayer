@@ -9,10 +9,8 @@ const STRINGS = {
     game_running: 'Game is running.',
     start_failed: 'Start failed.',
     please_wait: 'Please wait…',
-    demo_missing:
-      'Demo not found. Install Find The Needle Demo on Steam, or select FindTheNeedle.exe.',
+    demo_missing: 'Demo not found. Select FindTheNeedle.exe below.',
     pick_folder: 'Select FindTheNeedle.exe…',
-    open_steam_demo: 'Open Steam demo page',
     game_already_running: 'The game is already running. Please close it first.',
     game_not_found: 'Game not found.',
     pick_folder_title: 'Select FindTheNeedle.exe',
@@ -30,10 +28,8 @@ const STRINGS = {
     game_running: 'Spiel läuft.',
     start_failed: 'Start fehlgeschlagen.',
     please_wait: 'Bitte warten…',
-    demo_missing:
-      'Demo nicht gefunden. Installiere Find The Needle Demo über Steam oder wähle FindTheNeedle.exe.',
+    demo_missing: 'Demo nicht gefunden. Wähle unten FindTheNeedle.exe.',
     pick_folder: 'FindTheNeedle.exe wählen…',
-    open_steam_demo: 'Steam-Demo öffnen',
     game_already_running: 'Das Spiel läuft bereits. Bitte zuerst schließen.',
     game_not_found: 'Spiel nicht gefunden.',
     pick_folder_title: 'FindTheNeedle.exe auswählen',

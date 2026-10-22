@@ -148,17 +148,10 @@ h1 {
   cursor: not-allowed;
 }
 
-.actions {
-  margin-top: 0.85rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.65rem 1.1rem;
-  animation: rise 1.05s ease both;
-}
-
 .link {
   appearance: none;
   border: 0;
+  margin-top: 0.85rem;
   padding: 0;
   background: transparent;
   color: var(--muted);
@@ -167,6 +160,7 @@ h1 {
   text-decoration: underline;
   text-underline-offset: 0.18em;
   cursor: pointer;
+  animation: rise 1.05s ease both;
 }
 
 .link:hover {

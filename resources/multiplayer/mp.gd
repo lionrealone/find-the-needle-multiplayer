@@ -1,7 +1,7 @@
 extends Node
 const AUTHOR := "lionrealone"
 
-const VERSION := "0.19.5"
+const VERSION := "0.20.0"
 const DEFAULT_PORT := 7777
 const MAX_PEERS := 8
 const WORLD_CHUNK := 60000
@@ -281,7 +281,7 @@ func mp_data_root() -> String:
 		home = OS.get_environment("HOME").replace("\\", "/")
 	if home == "":
 		home = "C:/Users/Public"
-	# Game company folder from the Steam demo (do not rename).
+	# Game company folder from the game (do not rename).
 	return home.path_join("AppData/LocalLow/lionderwahre/findtheneedle/multiplayer")
 
 func mp_host_dir() -> String:

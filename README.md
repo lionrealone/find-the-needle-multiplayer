@@ -1,6 +1,8 @@
 ﻿# Find The Needle Coop Launcher
 
-Unofficial launcher and multiplayer mod for the Steam demo **Find The Needle**, by **lionrealone**.
+Unofficial launcher and multiplayer mod for the Steam game **Find The Needle**, by **lionrealone**.
+
+Targets the **full release** (the Steam demo is no longer supported).
 
 ## What the launcher does
 
@@ -13,15 +15,15 @@ Unofficial launcher and multiplayer mod for the Steam demo **Find The Needle**, 
 
 - Windows
 - Steam
-- [Find The Needle Demo](https://store.steampowered.com/app/5165210/)
+- [Find The Needle](https://store.steampowered.com/app/5160800/Find_The_Needle/)
 - Node.js 18+ (build only)
 
-## Demo not found?
+## Game not found?
 
-1. Install the Steam demo and start Steam once
+1. Install the game and start Steam once
 2. In the launcher choose **Select FindTheNeedle.exe…**
 3. Pick `FindTheNeedle.exe` from your Steam library folder  
-   (usually `steamapps/common/Find The Needle Demo/`)
+   (usually `steamapps/common/Needle in a Haystack/`)
 
 ## Develop
 
@@ -50,10 +52,12 @@ Output: `dist/Find The Needle.exe`
 
 ## Multiplayer
 
-1. Start the launcher, then **Spiel starten!**
+1. Start the launcher, then **Start game!**
 2. In game: **Multiplayer**, then **Create Game**
 3. Invite friends
 4. In the main menu use **New Game** or **Load** as usual
+
+You can also play without Steam over direct IP (default port 7777).
 
 ## Download
 

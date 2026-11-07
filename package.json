@@ -5,6 +5,7 @@
   "author": "lionrealone",
   "main": "src/main.js",
   "scripts": {
+    "test": "node --test \"src/**/*.test.js\"",
     "start": "electron .",
     "pack": "electron-builder --dir",
     "dist": "electron-builder --win"

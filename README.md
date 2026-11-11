@@ -69,6 +69,7 @@ MIT. See `LICENSE`.
 
 Unofficial fan project for Find The Needle. Not affiliated with the game developers or Valve/Steam. The game remains their property.
 
-## Author
+## Authors
 
-lionrealone
+- [lionrealone](https://github.com/lionrealone)
+- [alexm622](https://github.com/alexm622)

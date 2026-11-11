@@ -15,6 +15,9 @@ const {
   isGameRunning,
   looksLikeGameDir,
   saveGameDirMarker,
+  steamLaunchArgs,
+  steamRunUrl,
+  pickAppRoot,
   EXE_NAME,
 } = require('./game');
 const {
@@ -72,15 +75,15 @@ function bootLauncher() {
     w.webContents.on('devtools-opened', () => {
       try {
         w.webContents.closeDevTools();
-      } catch (_) {}
+      } catch {}
     });
     w.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   }
 
   function appRoot() {
     try {
-      return app.getAppPath();
-    } catch (_) {
+      return pickAppRoot(app.getAppPath(), __dirname);
+    } catch {
       return __dirname;
     }
   }
@@ -194,16 +197,16 @@ function bootLauncher() {
         fs.mkdirSync(mpRoot, { recursive: true });
         const flag = path.join(mpRoot, 'auto_open');
         if (fs.existsSync(flag)) fs.rmSync(flag, { force: true });
-      } catch (_) {}
+      } catch {}
 
       const steamExe = path.join(install.steamPath, 'steam.exe');
       if (fs.existsSync(steamExe)) {
-        spawn(steamExe, ['-applaunch', '5165210'], {
+        spawn(steamExe, steamLaunchArgs(), {
           detached: true,
           stdio: 'ignore',
         }).unref();
       } else {
-        await shell.openExternal('steam://rungameid/5165210');
+        await shell.openExternal(steamRunUrl());
       }
 
       spawnCleanupWatcher(install.gameDir);
@@ -220,7 +223,7 @@ function bootLauncher() {
       busy = false;
       try {
         await refreshStatus();
-      } catch (_) {}
+      } catch {}
     }
   }
 
@@ -248,7 +251,7 @@ function bootLauncher() {
       if (install && !(await isGameRunning())) {
         disableMod(install.gameDir);
       }
-    } catch (_) {}
+    } catch {}
 
     createWindow();
     booting = false;
@@ -267,7 +270,7 @@ function bootLauncher() {
         if (install && !(await isGameRunning())) {
           disableMod(install.gameDir);
         }
-      } catch (_) {}
+      } catch {}
     }
     if (process.platform !== 'darwin') app.quit();
   });

@@ -3,15 +3,17 @@ const fs = require('fs');
 const path = require('path');
 const { execFile, execFileSync } = require('child_process');
 const { app } = require('electron');
-
-const APP_ID = '5165210';
-const EXE_NAME = 'FindTheNeedle.exe';
-const FOLDER_GUESSES = [
-  'Find The Needle Demo',
-  'Find the Needle Demo',
-  'FindTheNeedle Demo',
-  'Find The Needle',
-];
+const {
+  APP_ID,
+  EXE_NAME,
+  FOLDER_GUESSES,
+  steamLaunchArgs,
+  steamRunUrl,
+  isDemoFolderName,
+  looksLikeGameDir,
+  isReleaseGameDir,
+  pickAppRoot,
+} = require('./target');
 
 function readText(file) {
   try {
@@ -112,15 +114,6 @@ function steamRoots() {
   });
 }
 
-function looksLikeGameDir(dir) {
-  if (!dir) return false;
-  try {
-    return fs.existsSync(path.join(dir, EXE_NAME));
-  } catch {
-    return false;
-  }
-}
-
 function saveGameDirMarker(dir) {
   try {
     const marker = path.join(app.getPath('userData'), 'game-dir.txt');
@@ -135,7 +128,7 @@ function findGameInstall() {
   const marker = path.join(app.getPath('userData'), 'game-dir.txt');
   if (fs.existsSync(marker)) {
     const dir = normalizeSteamPath(readText(marker).trim());
-    if (looksLikeGameDir(dir)) {
+    if (isReleaseGameDir(dir)) {
       return { gameDir: dir, steamPath: guessSteamNear(dir) };
     }
   }
@@ -161,7 +154,7 @@ function findGameInstall() {
   for (const root of roots) {
     for (const name of FOLDER_GUESSES) {
       const guess = path.join(root, 'steamapps', 'common', name);
-      if (looksLikeGameDir(guess)) {
+      if (isReleaseGameDir(guess)) {
         return { gameDir: guess, steamPath: root };
       }
     }
@@ -178,6 +171,7 @@ function findGameInstall() {
     }
     for (const entry of entries) {
       if (!entry.isDirectory()) continue;
+      if (isDemoFolderName(entry.name)) continue;
       const gameDir = path.join(common, entry.name);
       if (looksLikeGameDir(gameDir)) {
         const lower = entry.name.toLowerCase();
@@ -259,8 +253,13 @@ module.exports = {
   AUTHOR,
   APP_ID,
   EXE_NAME,
-  findGameInstall,
+  FOLDER_GUESSES,
+  steamLaunchArgs,
+  steamRunUrl,
+  isReleaseGameDir,
   looksLikeGameDir,
+  pickAppRoot,
+  findGameInstall,
   saveGameDirMarker,
   isGameRunning,
   waitForGameExit,

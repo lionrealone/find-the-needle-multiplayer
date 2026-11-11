@@ -1,10 +1,11 @@
 {
   "name": "needle-coop-launcher",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Find The Needle Co-op Launcher by lionrealone",
   "author": "lionrealone",
   "main": "src/main.js",
   "scripts": {
+    "test": "node --test \"src/**/*.test.js\"",
     "start": "electron .",
     "pack": "electron-builder --dir",
     "dist": "electron-builder --win"
